@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
 	      else  
           board[cur_row][cur_col]=2;
       }
-    })
+    }
     switch (ch) {
     case ' ':  
       if (board[cur_row][cur_col]==0) {
