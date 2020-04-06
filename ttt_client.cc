@@ -115,11 +115,7 @@ int main(int argc, char *argv[]) {
   refresh();
   draw_top_matrix(board,0,0);
 
-  // I/O Loop....
-  // Stop when the q Key is hit.
-  //
-  
-  while ((ch = getch())!='q') {
+while ((ch = getch())!='q') {
     int count = 0;
     if (count == 0) {
       if (is_X) {
@@ -188,4 +184,5 @@ int main(int argc, char *argv[]) {
     }
   }
 }
+
   
