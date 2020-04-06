@@ -89,15 +89,8 @@ int main(int argc, char *argv[]) {
   boost::asio::streambuf buf;
   boost::asio::read_until( socket, buf, "\n" );
   string data = boost::asio::buffer_cast<const char*>(buf.data());
-  bool is_X;
-  cout << data << endl;
-  if (data == "x") {
-    piece = 'x';
-  } else {
-    piece = 'o';
-  }
-  
-  cout << piece << endl;
+  string dat = data;
+  cout << dat << endl;
 
   initscr();
   // Clear the screen
@@ -116,7 +109,7 @@ while ((ch = getch())!='q') {
     switch (ch) {
     case ' ':  
       if (board[cur_row][cur_col]==0) {
-	      if (piece == 'x') 
+	      if (dat == "x") 
           board[cur_row][cur_col]=1;
 	      else  
           board[cur_row][cur_col]=2;
