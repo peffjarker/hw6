@@ -62,6 +62,7 @@ void draw_top_matrix(vector<vector<int>> &board,
     printw("+");
   }
   move(2 * cur_row + 1, 2 * cur_col + 1);
+  cout << dat << endl;
 }
 
 int main(int argc, char *argv[])
@@ -121,6 +122,15 @@ int main(int argc, char *argv[])
 
   while ((ch = getch()) != 'q')
   {
+    if (dat == "o") {
+      boost::asio::read_until(socket, buf, "\n");
+      string data = boost::asio::buffer_cast<const char *>(buf.data());
+      int r = data[0];
+      int c = data[1];
+      board[r][c] = 1;
+      draw_top_matrix(board, cur_row, cur_col);
+      refresh();
+    }
     switch (ch)
     {
     case ' ':
