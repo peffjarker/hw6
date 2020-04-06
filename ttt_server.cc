@@ -34,29 +34,26 @@ bool valid(int i, int j) {
 // Check to see whether player X (1 or 2) won the game!
 //
 bool win(vector<vector<int> >&board, int X) {
-
   for (int i=0;i<4; i++) {
     for (int j=0;j<4;j++) {
-
       for (int k=-1;k<=1; k++) {
-	for (int l = -1; l<=1;l++) {
-	  if ((k!=0) || (l!=0)) {
-	    bool match=true;
-	    for (int m=0;m<=2;m++) {
-	      int i1 = i+(m*k);
-	      int j1 = j+(m*l);
-	      if (!valid(i1,j1)){
-		match =false; // Failed out of bounds
-		} else {
-		if (board[i1][j1]!=X) {
-		  match = false; // Failed because wrong character
-		}
+	      for (int l = -1; l<=1;l++) {
+	        if ((k!=0) || (l!=0)) {
+	          bool match=true;
+	          for (int m=0;m<=2;m++) {
+	            int i1 = i+(m*k);
+	            int j1 = j+(m*l);
+	            if (!valid(i1,j1)){
+		            match =false; // Failed out of bounds
+		          } else {
+		            if (board[i1][j1]!=X) {
+		              match = false; // Failed because wrong character
+		            }
+	            } 
+	          }
+	          if (match) return true;
+	        }
 	      }
-	      
-	    }
-	    if (match) return true;
-	  }
-	}
       }
     }
   }
