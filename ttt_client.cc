@@ -153,12 +153,6 @@ int main(int argc, char *argv[]) {
       refresh();
       break;
     }
-    if (win(board,1)) {
-      break;
-    }
-    if (win(board,2)) {
-      break;
-    }
   }
 }
   
