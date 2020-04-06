@@ -103,7 +103,7 @@ void draw_top_matrix(vector<vector<int> > &board,
       
 
 
-int main() {
+main() {
   int rows;
   int cols;
   int cur_row=0;
