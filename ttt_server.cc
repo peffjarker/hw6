@@ -14,41 +14,53 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include "boost/asio.hpp"
+#include <boost/asio.hpp>
 
 //using namespace std;
 
 using namespace std;
 using boost::asio::ip::tcp;
 
-int rsp_int(string &x) {
-  if (x=="rock\n") return 0;
-  if (x=="scissors\n") return 1;
-  if (x=="paper\n") return 2;
-  return 3;
+bool valid(int i, int j) {
+  if (i<0) return false;
+  if (j<0) return false;
+  if (i>=4) return false;
+  if (j>=4) return false;
+  return true;
 }
 
-// i and j can be 0, 1, or 2.
+
 //
-int win_lose_tie(int i, int j) {
-  if (i==j) return 0; // Tie
-  switch (i) {
-  case 0:
-    switch (j) {
-    case 1: return 1; // Win
-    case 2: return 2; // Lose
-    }
-  case 1:
-    switch (j) {
-    case 0: return 2; // Lose
-    case 2: return 1; // Win
-    }
-  case 2:
-    switch (j) {
-    case 0: return 1; // Win
-    case 1: return 2; // Lose
+// Check to see whether player X (1 or 2) won the game!
+//
+bool win(vector<vector<int> >&board, int X) {
+
+  for (int i=0;i<4; i++) {
+    for (int j=0;j<4;j++) {
+
+      for (int k=-1;k<=1; k++) {
+	for (int l = -1; l<=1;l++) {
+	  if ((k!=0) || (l!=0)) {
+	    bool match=true;
+	    for (int m=0;m<=2;m++) {
+	      int i1 = i+(m*k);
+	      int j1 = j+(m*l);
+	      if (!valid(i1,j1)){
+		match =false; // Failed out of bounds
+		} else {
+		if (board[i1][j1]!=X) {
+		  match = false; // Failed because wrong character
+		}
+	      }
+	      
+	    }
+	    if (match) return true;
+	  }
+	}
+      }
     }
   }
+  return false;
 }
 
 
@@ -82,51 +94,6 @@ void RSP() {
     cout << data2 << endl;
 
     // Figure out who won!
-    int p1,p2;
-    p1 = rsp_int(data);
-    p2 = rsp_int(data2);
-    if ((p1==3) || (p2 == 3)) {
-      // Write error
-      string msg;
-      msg = "error\n";
-      boost::asio::write( socket1, boost::asio::buffer(msg) );
-      boost::asio::write( socket2, boost::asio::buffer(msg) );
-    } else {
-      // Send results to the players 1 and 2.
-      istringstream in1(data2);
-      string second;
-      in1 >> second;
-      
-      string mesg1;
-      mesg1 = "Player 2: " + second + " you "; 
-      switch (win_lose_tie(p1,p2)) {
-      case 0: mesg1 += "Tie\n";
-	break;
-      case 1: mesg1 += "Win\n";
-	break;
-      case 2: mesg1 += "Lose\n";
-	break;
-      }
-      boost::asio::write( socket1, boost::asio::buffer(mesg1) );
-      string mesg2;
-      istringstream in(data);
-      string first;
-      in >> first;
-      mesg2 = "Player 1: " + first + " you ";
-      
-      
-      switch (win_lose_tie(p2,p1)) {
-      case 0: mesg2 += "Tie\n";
-	break;
-      case 1: mesg2 += "Win\n";
-	break;
-      case 2: mesg2 += "Lose\n";
-	break;
-      }
-      boost::asio::write( socket2, boost::asio::buffer(mesg2) );
-      
-    
-    }
 }
 
 
@@ -136,3 +103,4 @@ int main()
   
   return 0;
 }
+
