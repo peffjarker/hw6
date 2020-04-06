@@ -86,6 +86,15 @@ int main(int argc, char *argv[]) {
   tcp::socket socket(my_service);
   
   socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(argv[1]),portno));
+  boost::asio::streambuf buf;
+  boost::asio::read_until( socket1, buf, "\n" );
+  string data = boost::asio::buffer_cast<const char*>(buf.data());
+  bool is_X;
+  if (data == 'x') {
+    is_X= true;
+  } else {
+    is_X = false;
+  }
   
   initscr();
   // Clear the screen
@@ -100,10 +109,9 @@ int main(int argc, char *argv[]) {
   refresh();
   draw_top_matrix(board,0,0);
 
-    // I/O Loop....
+  // I/O Loop....
   // Stop when the q Key is hit.
   //
-  bool is_X= false;
   
   while ((ch = getch())!='q') {
     switch (ch) {
