@@ -114,6 +114,24 @@ int main(int argc, char *argv[]) {
   //
   
   while ((ch = getch())!='q') {
+    int count = 0;
+    if (count == 0) {
+      if (is_X) {
+        count++;
+      }
+    }
+    if (count != 0) {
+      boost::asio::read_until( socket, buf, "\n" );
+      data = boost::asio::buffer_cast<const char*>(buf.data());
+      int c_row = data[0];
+      int c_col = data[1];
+      if (board[cur_row][cur_col]==0) {
+	      if (is_X) 
+          board[cur_row][cur_col]=1;
+	      else  
+          board[cur_row][cur_col]=2;
+      }
+    })
     switch (ch) {
     case ' ':  
       if (board[cur_row][cur_col]==0) {
@@ -121,13 +139,12 @@ int main(int argc, char *argv[]) {
           board[cur_row][cur_col]=1;
 	      else  
           board[cur_row][cur_col]=2;
-	      is_X = !is_X;
       }
       // Redraw the screen.
 	    draw_top_matrix(board,cur_row,cur_col);
       msg = to_string(cur_row) + to_string(cur_col);
       msg += '\n';
-      boost::asio::write( socket, boost::asio::buffer(msg));
+      boost::asio::write(socket, boost::asio::buffer(msg));
 	    refresh();
       break;
     case KEY_RIGHT:
@@ -156,7 +173,7 @@ int main(int argc, char *argv[]) {
       cur_row++;
       cur_row%=4;
       draw_top_matrix(board,cur_row,cur_col);
-            //paint_markers(rows,cols,10,cur_row,cur_col);
+      //paint_markers(rows,cols,10,cur_row,cur_col);
       // Redraw the screen.
       refresh();
       break;
