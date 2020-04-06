@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
       }
       // Redraw the screen.
 	    draw_top_matrix(board,cur_row,cur_col);
-      string msg = (string) cur_row + (string) cur_col;
+      string msg = to_string(cur_row) + to_string(cur_col);
       msg += '\n';
       boost::asio::write( socket, boost::asio::buffer(msg));
 	    refresh();
