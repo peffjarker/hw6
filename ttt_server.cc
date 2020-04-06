@@ -74,12 +74,13 @@ void RSP() {
     // Wait for a connection from 
     acceptor.accept(socket1);
     cout << "Connection 1 Established!!!" << endl;
-    string msg = "x\n";
 
     //Wait for a connection on Socket #2 
     tcp::socket socket2(my_service);
     acceptor.accept(socket2);
-    cout << "Connection Established!!!!" << endl;
+    cout << "Connection 2 Established!!!!" << endl;
+
+    string msg = "x\n";
     boost::asio::write(socket1, boost::asio::buffer(msg));
     msg = "o\n";
     boost::asio::write(socket2, boost::asio::buffer(msg));
