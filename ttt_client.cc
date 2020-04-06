@@ -53,7 +53,7 @@ void draw_top_matrix(vector<vector<int> > &board,
 }
 
 int main(int argc, char *argv[]) {
-
+  char piece;
   int rows;
   int cols;
   int cur_row=0;
@@ -92,16 +92,12 @@ int main(int argc, char *argv[]) {
   bool is_X;
   cout << data << endl;
   if (data == "x") {
-    is_X = true;
+    piece = 'x';
   } else {
-    is_X = false;
+    piece = 'o';
   }
   
-  if (is_X) {
-    cout << "char X" << endl;
-  } else {
-    cout << "char O" << endl;
-  }
+  cout << piece << endl;
 
   initscr();
   // Clear the screen
@@ -120,7 +116,7 @@ while ((ch = getch())!='q') {
     switch (ch) {
     case ' ':  
       if (board[cur_row][cur_col]==0) {
-	      if (is_X) 
+	      if (piece == 'x') 
           board[cur_row][cur_col]=1;
 	      else  
           board[cur_row][cur_col]=2;
