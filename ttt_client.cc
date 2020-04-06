@@ -62,7 +62,6 @@ void draw_top_matrix(vector<vector<int>> &board,
     printw("+");
   }
   move(2 * cur_row + 1, 2 * cur_col + 1);
-  cout << dat << endl;
 }
 
 int main(int argc, char *argv[])
