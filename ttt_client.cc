@@ -19,54 +19,68 @@ using boost::asio::ip::tcp;
 
 string dat;
 
-void draw_top_matrix(vector<vector<int> > &board,
-		     int cur_row,
-		     int cur_col) {
+void draw_top_matrix(vector<vector<int>> &board,
+                     int cur_row,
+                     int cur_col)
+{
 
-  for (int j=0;j<4;j++) {
-      move(0,2*j);
-      printw("+-");
-    }
-    move(0,2*4);
-    printw("+");
-  for (int i=0;i<4;i++) {
-    for (int j=0;j<4;j++) {
-      move(2*i+1,2*j);
+  for (int j = 0; j < 4; j++)
+  {
+    move(0, 2 * j);
+    printw("+-");
+  }
+  move(0, 2 * 4);
+  printw("+");
+  for (int i = 0; i < 4; i++)
+  {
+    for (int j = 0; j < 4; j++)
+    {
+      move(2 * i + 1, 2 * j);
       printw("|");
-      move(2*i+1,2*j+1);
-      switch (board[i][j]) {
-      case 0: printw(" ");  break;
-      case 1: printw("X");  break;
-      case 2: printw("O"); break;
+      move(2 * i + 1, 2 * j + 1);
+      switch (board[i][j])
+      {
+      case 0:
+        printw(" ");
+        break;
+      case 1:
+        printw("X");
+        break;
+      case 2:
+        printw("O");
+        break;
       }
-      
-      
     }
-    move(2*i+1,2*4);
+    move(2 * i + 1, 2 * 4);
     printw("|");
-    for (int j=0;j<4;j++) {
-      move(2*i+2,2*j);
+    for (int j = 0; j < 4; j++)
+    {
+      move(2 * i + 2, 2 * j);
       printw("+-");
     }
-    move(2*i+2,2*4);
+    move(2 * i + 2, 2 * 4);
     printw("+");
   }
-  move(2*cur_row+1,2*cur_col+1);
+  move(2 * cur_row + 1, 2 * cur_col + 1);
+  cout << dat << endl;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   char piece;
   int rows;
   int cols;
-  int cur_row=0;
-  int cur_col=0;
+  int cur_row = 0;
+  int cur_col = 0;
   int ch;
   string msg;
 
   vector<vector<int>> board;
-  for (int i=0;i<4;i++) {
+  for (int i = 0; i < 4; i++)
+  {
     vector<int> t;
-    for (int j=0;j<4;j++) {
+    for (int j = 0; j < 4; j++)
+    {
       t.push_back(0);
     }
     board.push_back(t);
@@ -86,69 +100,71 @@ int main(int argc, char *argv[]) {
   //  tcp::resolver::results_type endpoints = resolver.resolve(argv[2], argv[3]);
 
   tcp::socket socket(my_service);
-  
-  socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(argv[1]),portno));
-  boost::asio::streambuf buf;
-  boost::asio::read_until( socket, buf, "\n" );
-  string data = boost::asio::buffer_cast<const char*>(buf.data());
-  dat = data;
 
+  socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(argv[1]), portno));
+  boost::asio::streambuf buf;
+  boost::asio::read_until(socket, buf, "\n");
+  string data = boost::asio::buffer_cast<const char *>(buf.data());
+  dat = data;
 
   initscr();
   // Clear the screen
   clear();
   // Get the size of the window!
-  getmaxyx(stdscr,rows,cols);
-  cbreak();  // Pass all characters to this program!
+  getmaxyx(stdscr, rows, cols);
+  cbreak();             // Pass all characters to this program!
   keypad(stdscr, TRUE); // Grab the special keys, arrow keys, etc.
   // Paint the row and column markers.
   //paint_markers(rows,cols,10,0,0);
   // Redraw the screen.
   refresh();
-  draw_top_matrix(board,0,0);
+  draw_top_matrix(board, 0, 0);
 
-while ((ch = getch())!='q') {
-    switch (ch) {
-    case ' ':  
-      if (board[cur_row][cur_col]==0) {
-	      if (dat == "x") 
-          board[cur_row][cur_col]=1;
-	      else  
-          board[cur_row][cur_col]=2;
+  while ((ch = getch()) != 'q')
+  {
+    switch (ch)
+    {
+    case ' ':
+      if (board[cur_row][cur_col] == 0)
+      {
+        if (dat == "x")
+          board[cur_row][cur_col] = 1;
+        else
+          board[cur_row][cur_col] = 2;
       }
       // Redraw the screen.
-	    draw_top_matrix(board,cur_row,cur_col);
+      draw_top_matrix(board, cur_row, cur_col);
       msg = to_string(cur_row) + to_string(cur_col);
       msg += '\n';
       boost::asio::write(socket, boost::asio::buffer(msg));
-	    refresh();
+      refresh();
       break;
     case KEY_RIGHT:
       cur_col++;
-      cur_col%=4;
-      draw_top_matrix(board,cur_row,cur_col);
+      cur_col %= 4;
+      draw_top_matrix(board, cur_row, cur_col);
       // Redraw the screen.
       refresh();
       break;
     case KEY_LEFT:
       cur_col--;
-      cur_col = (4+cur_col)%4;
-      draw_top_matrix(board,cur_row,cur_col);
+      cur_col = (4 + cur_col) % 4;
+      draw_top_matrix(board, cur_row, cur_col);
       // Redraw the screen.
       refresh();
       break;
     case KEY_UP:
       cur_row--;
-      cur_row=(4+cur_row) % 4;
-      draw_top_matrix(board,cur_row,cur_col);
+      cur_row = (4 + cur_row) % 4;
+      draw_top_matrix(board, cur_row, cur_col);
       // paint_markers(rows,cols,10,cur_row,cur_col);
       // Redraw the screen.
       refresh();
       break;
     case KEY_DOWN:
       cur_row++;
-      cur_row%=4;
-      draw_top_matrix(board,cur_row,cur_col);
+      cur_row %= 4;
+      draw_top_matrix(board, cur_row, cur_col);
       //paint_markers(rows,cols,10,cur_row,cur_col);
       // Redraw the screen.
       refresh();
@@ -156,5 +172,3 @@ while ((ch = getch())!='q') {
     }
   }
 }
-
-  
