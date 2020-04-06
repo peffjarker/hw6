@@ -96,10 +96,8 @@ void RSP()
   acceptor.accept(socket2);
   cout << "Connection 2 Established!!!!" << endl;
 
-  string msg = "x\n";
-  boost::asio::write(socket1, boost::asio::buffer(msg));
-  msg = "o\n";
-  boost::asio::write(socket2, boost::asio::buffer(msg));
+  boost::asio::write(socket1, boost::asio::buffer("x\n"));
+  boost::asio::write(socket2, boost::asio::buffer("o\n"));
 
   // Read from Socket 1 until newline
   boost::asio::streambuf buf;
@@ -108,10 +106,8 @@ void RSP()
   cout << data << endl;
   boost::asio::write(socket2, boost::asio::buffer(data));
   // Read from Socket #2 until newline
-  boost::asio::streambuf buf2;
-  boost::asio::read_until(socket2, buf2, "\n");
-  string data2 = boost::asio::buffer_cast<const char *>(buf2.data());
-  cout << data2 << endl;
+
+
 
   // Figure out who won!
 }
