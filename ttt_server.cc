@@ -74,7 +74,7 @@ void RSP() {
     // Wait for a connection from 
     acceptor.accept(socket1);
     // Connection Established!!!
-    string msg = "x";
+    string msg = "x\n";
     boost::asio::write( socket1, boost::asio::buffer(msg));
     // Read from Socket 1 until newline
     boost::asio::streambuf buf;
@@ -86,7 +86,7 @@ void RSP() {
     tcp::socket socket2(my_service);
     acceptor.accept(socket2);
     // Connection Established!!!!
-    msg = "o";
+    msg = "o\n";
     boost::asio::write( socket2, boost::asio::buffer(msg));
     // Read from Socket #2 until newline
     boost::asio::streambuf buf2;
