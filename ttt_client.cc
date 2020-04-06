@@ -1,188 +1,109 @@
-//****************************************************
-// File:rsp_client.cc
-// Author: David W. Juedes
-// Purpose: play rock-scissors-paper over the network.
-// Connects to rsp server.
-// rsp server acts as referee.
-// returns whether you won-lost or tied.
-// Client write "rock/scissors/paper"
-// Server return "win/lose/tie"
+//*****************************************************************
+// File: rsp_server.cc
+// AUthor: David W. Juedes
+// Purpose: Rock-Scissors-Paper Server
+// Accepts exactly two connections from two rsp clients.
+// gets two strings from two different clients.  
+//  ---
+// returns the clients whether they won or lost.
 //
-//**************************************************************************
+// Acknowledgement:
+// Based on the approach found here:
+// https://www.codeproject.com/Articles/1264257/Socket-Programming-in-Cplusplus-using-boost-asio-T
+//***************************************************************************
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <ncurses.h>
 #include <vector>
-#include "boost/asio.hpp"
+#include <boost/asio.hpp>
+
+//using namespace std;
+
 using namespace std;
 using boost::asio::ip::tcp;
 
-void draw_top_matrix(vector<vector<int> > &board,
-		     int cur_row,
-		     int cur_col) {
-
-  for (int j=0;j<4;j++) {
-      move(0,2*j);
-      printw("+-");
-    }
-    move(0,2*4);
-    printw("+");
-  for (int i=0;i<4;i++) {
-    for (int j=0;j<4;j++) {
-      move(2*i+1,2*j);
-      printw("|");
-      move(2*i+1,2*j+1);
-      switch (board[i][j]) {
-      case 0: printw(" ");  break;
-      case 1: printw("X");  break;
-      case 2: printw("O"); break;
-      }
-      
-      
-    }
-    move(2*i+1,2*4);
-    printw("|");
-    for (int j=0;j<4;j++) {
-      move(2*i+2,2*j);
-      printw("+-");
-    }
-    move(2*i+2,2*4);
-    printw("+");
-  }
-  move(2*cur_row+1,2*cur_col+1);
+bool valid(int i, int j) {
+  if (i<0) return false;
+  if (j<0) return false;
+  if (i>=4) return false;
+  if (j>=4) return false;
+  return true;
 }
 
-int main(int argc, char *argv[]) {
 
-  int rows;
-  int cols;
-  int cur_row=0;
-  int cur_col=0;
-  int ch;
-  string msg;
-
-  vector<vector<int>> board;
-  for (int i=0;i<4;i++) {
-    vector<int> t;
+//
+// Check to see whether player X (1 or 2) won the game!
+//
+bool win(vector<vector<int> >&board, int X) {
+  for (int i=0;i<4; i++) {
     for (int j=0;j<4;j++) {
-      t.push_back(0);
-    }
-    board.push_back(t);
-  }
-
-  cout << "X args" << argc << endl;
-  cout << "server" << argv[1] << endl;
-  cout << "port" << argv[2] << endl;
-
-  int portno = atoi(argv[2]);
-  // Standard boost code to connect to a server.
-  // Comes from the boost tutorial
-  boost::asio::io_service my_service;
-
-  tcp::resolver resolver(my_service);
-  // Find the server/port number.
-  //  tcp::resolver::results_type endpoints = resolver.resolve(argv[2], argv[3]);
-
-  tcp::socket socket(my_service);
-  
-  socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(argv[1]),portno));
-  boost::asio::streambuf buf;
-  boost::asio::read_until( socket, buf, "\n" );
-  string data = boost::asio::buffer_cast<const char*>(buf.data());
-  bool is_X;
-  if (data == "x") {
-    is_X= true;
-  } else {
-    is_X = false;
-  }
-  
-  if (is_X) {
-    cout << "char X" << endl;
-  } else {
-    cout << "char O" << endl;
-  }
-
-  initscr();
-  // Clear the screen
-  clear();
-  // Get the size of the window!
-  getmaxyx(stdscr,rows,cols);
-  cbreak();  // Pass all characters to this program!
-  keypad(stdscr, TRUE); // Grab the special keys, arrow keys, etc.
-  // Paint the row and column markers.
-  //paint_markers(rows,cols,10,0,0);
-  // Redraw the screen.
-  refresh();
-  draw_top_matrix(board,0,0);
-
-while ((ch = getch())!='q') {
-    int count = 0;
-    if (count == 0) {
-      if (is_X) {
-        count++;
+      for (int k=-1;k<=1; k++) {
+	      for (int l = -1; l<=1;l++) {
+	        if ((k!=0) || (l!=0)) {
+	          bool match=true;
+	          for (int m=0;m<=2;m++) {
+	            int i1 = i+(m*k);
+	            int j1 = j+(m*l);
+	            if (!valid(i1,j1)){
+		            match =false; // Failed out of bounds
+		          } else {
+		            if (board[i1][j1]!=X) {
+		              match = false; // Failed because wrong character
+		            }
+	            } 
+	          }
+	          if (match) return true;
+	        }
+	      }
       }
     }
-    if (count != 0) {
-      boost::asio::read_until( socket, buf, "\n" );
-      data = boost::asio::buffer_cast<const char*>(buf.data());
-      int c_row = data[0];
-      int c_col = data[1];
-      if (board[cur_row][cur_col]==0) {
-	      if (is_X) 
-          board[cur_row][cur_col]=1;
-	      else  
-          board[cur_row][cur_col]=2;
-      }
-      draw_top_matrix(board,cur_row,cur_col);
-	    refresh();
-    }
-    switch (ch) {
-    case ' ':  
-      if (board[cur_row][cur_col]==0) {
-	      if (is_X) 
-          board[cur_row][cur_col]=1;
-	      else  
-          board[cur_row][cur_col]=2;
-      }
-      // Redraw the screen.
-	    draw_top_matrix(board,cur_row,cur_col);
-      msg = to_string(cur_row) + to_string(cur_col);
-      msg += '\n';
-      boost::asio::write(socket, boost::asio::buffer(msg));
-	    refresh();
-      break;
-    case KEY_RIGHT:
-      cur_col++;
-      cur_col%=4;
-      draw_top_matrix(board,cur_row,cur_col);
-      // Redraw the screen.
-      refresh();
-      break;
-    case KEY_LEFT:
-      cur_col--;
-      cur_col = (4+cur_col)%4;
-      draw_top_matrix(board,cur_row,cur_col);
-      // Redraw the screen.
-      refresh();
-      break;
-    case KEY_UP:
-      cur_row--;
-      cur_row=(4+cur_row) % 4;
-      draw_top_matrix(board,cur_row,cur_col);
-      // paint_markers(rows,cols,10,cur_row,cur_col);
-      // Redraw the screen.
-      refresh();
-      break;
-    case KEY_DOWN:
-      cur_row++;
-      cur_row%=4;
-      draw_top_matrix(board,cur_row,cur_col);
-      //paint_markers(rows,cols,10,cur_row,cur_col);
-      // Redraw the screen.
-      refresh();
-      break;
-    }
   }
+  return false;
 }
 
+
+void RSP() {
+    boost::asio::io_service my_service;
+
+    // Accept connections on
+    // Advertise a service on port 4700
+    tcp::acceptor acceptor(my_service, tcp::endpoint(tcp::v4(), 4700));
+
+    tcp::socket socket1(my_service);
+    // Wait for a connection from 
+    acceptor.accept(socket1);
+    cout << "Connection 1 Established!!!" << endl;
+    string msg = "x\n";
+
+    //Wait for a connection on Socket #2 
+    tcp::socket socket2(my_service);
+    acceptor.accept(socket2);
+    cout << "Connection Established!!!!" << endl;
+    boost::asio::write(socket1, boost::asio::buffer(msg));
+    msg = "o\n";
+    boost::asio::write(socket2, boost::asio::buffer(msg));
+
+    // Read from Socket 1 until newline
+    boost::asio::streambuf buf;
+    boost::asio::read_until( socket1, buf, "\n" );
+    string data = boost::asio::buffer_cast<const char*>(buf.data());
+    cout << data << endl;
+    boost::asio::write(socket2, boost::asio::buffer(data));
+    // Read from Socket #2 until newline
+    boost::asio::streambuf buf2;
+    boost::asio::read_until( socket2, buf2, "\n" );
+    string data2 = boost::asio::buffer_cast<const char*>(buf2.data());
+    cout << data2 << endl;
+
+    // Figure out who won!
+}
+
+
+int main()
+{
+  RSP();
   
+  return 0;
+}
+
