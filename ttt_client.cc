@@ -17,10 +17,13 @@
 using namespace std;
 using boost::asio::ip::tcp;
 
+string dat;
+
 void draw_top_matrix(vector<vector<int> > &board,
 		     int cur_row,
 		     int cur_col) {
 
+           cout << dat << endl;
   for (int j=0;j<4;j++) {
       move(0,2*j);
       printw("+-");
@@ -89,8 +92,8 @@ int main(int argc, char *argv[]) {
   boost::asio::streambuf buf;
   boost::asio::read_until( socket, buf, "\n" );
   string data = boost::asio::buffer_cast<const char*>(buf.data());
-  string dat = data;
-  cout << dat << endl;
+  dat = data;
+
 
   initscr();
   // Clear the screen
