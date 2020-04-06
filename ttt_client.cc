@@ -96,6 +96,12 @@ int main(int argc, char *argv[]) {
     is_X = false;
   }
   
+  if (is_X) {
+    cout << "char X" << endl;
+  } else {
+    cout << "char O" << endl;
+  }
+
   initscr();
   // Clear the screen
   clear();
@@ -131,6 +137,8 @@ int main(int argc, char *argv[]) {
 	      else  
           board[cur_row][cur_col]=2;
       }
+      draw_top_matrix(board,cur_row,cur_col);
+	    refresh();
     }
     switch (ch) {
     case ' ':  
