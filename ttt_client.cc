@@ -23,7 +23,6 @@ void draw_top_matrix(vector<vector<int> > &board,
 		     int cur_row,
 		     int cur_col) {
 
-           cout << dat << endl;
   for (int j=0;j<4;j++) {
       move(0,2*j);
       printw("+-");
