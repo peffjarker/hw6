@@ -90,8 +90,9 @@ int main(int argc, char *argv[]) {
   boost::asio::read_until( socket, buf, "\n" );
   string data = boost::asio::buffer_cast<const char*>(buf.data());
   bool is_X;
+  cout << data << endl;
   if (data == "x") {
-    is_X= true;
+    is_X = true;
   } else {
     is_X = false;
   }
@@ -116,26 +117,6 @@ int main(int argc, char *argv[]) {
   draw_top_matrix(board,0,0);
 
 while ((ch = getch())!='q') {
-    int count = 0;
-    if (count == 0) {
-      if (is_X) {
-        count++;
-      }
-    }
-    if (count != 0) {
-      boost::asio::read_until( socket, buf, "\n" );
-      data = boost::asio::buffer_cast<const char*>(buf.data());
-      int c_row = data[0];
-      int c_col = data[1];
-      if (board[cur_row][cur_col]==0) {
-	      if (is_X) 
-          board[cur_row][cur_col]=1;
-	      else  
-          board[cur_row][cur_col]=2;
-      }
-      draw_top_matrix(board,cur_row,cur_col);
-	    refresh();
-    }
     switch (ch) {
     case ' ':  
       if (board[cur_row][cur_col]==0) {
