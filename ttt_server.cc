@@ -14,6 +14,8 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <ncurses.h>
+#include <vector>
 #include <boost/asio.hpp>
 
 //using namespace std;
@@ -72,7 +74,7 @@ void RSP() {
     // Wait for a connection from 
     acceptor.accept(socket1);
     // Connection Established!!!
-
+    oost::asio::write( socket, boost::asio::buffer('x'));
     // Read from Socket 1 until newline
     boost::asio::streambuf buf;
     boost::asio::read_until( socket1, buf, "\n" );
@@ -83,7 +85,7 @@ void RSP() {
     tcp::socket socket2(my_service);
     acceptor.accept(socket2);
     // Connection Established!!!!
-    
+    oost::asio::write( socket, boost::asio::buffer('o'));
     // Read from Socket #2 until newline
     boost::asio::streambuf buf2;
     boost::asio::read_until( socket2, buf2, "\n" );
