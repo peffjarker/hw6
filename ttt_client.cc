@@ -59,6 +59,7 @@ int main(int argc, char *argv[]) {
   int cur_row=0;
   int cur_col=0;
   int ch;
+  string msg = '';
 
   vector<vector<int>> board;
   for (int i=0;i<4;i++) {
