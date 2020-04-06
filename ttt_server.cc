@@ -76,11 +76,6 @@ void RSP() {
     // Connection Established!!!
     string msg = "x\n";
     boost::asio::write( socket1, boost::asio::buffer(msg));
-    // Read from Socket 1 until newline
-    boost::asio::streambuf buf;
-    boost::asio::read_until( socket1, buf, "\n" );
-    string data = boost::asio::buffer_cast<const char*>(buf.data());
-    cout << data << endl;
 
     //Wait for a connection on Socket #2 
     tcp::socket socket2(my_service);
@@ -88,6 +83,13 @@ void RSP() {
     // Connection Established!!!!
     msg = "o\n";
     boost::asio::write( socket2, boost::asio::buffer(msg));
+
+    // Read from Socket 1 until newline
+    boost::asio::streambuf buf;
+    boost::asio::read_until( socket1, buf, "\n" );
+    string data = boost::asio::buffer_cast<const char*>(buf.data());
+    cout << data << endl;
+    boost::asio::write(socket2, boost::asio::buffer(data));
     // Read from Socket #2 until newline
     boost::asio::streambuf buf2;
     boost::asio::read_until( socket2, buf2, "\n" );
