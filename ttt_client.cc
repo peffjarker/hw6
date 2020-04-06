@@ -87,10 +87,10 @@ int main(int argc, char *argv[]) {
   
   socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(argv[1]),portno));
   boost::asio::streambuf buf;
-  boost::asio::read_until( socket1, buf, "\n" );
+  boost::asio::read_until( socket, buf, "\n" );
   string data = boost::asio::buffer_cast<const char*>(buf.data());
   bool is_X;
-  if (data == 'x') {
+  if (data == "x") {
     is_X= true;
   } else {
     is_X = false;
